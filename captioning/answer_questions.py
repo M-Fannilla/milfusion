@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import torch
 import pandas as pd
 from PIL import Image
@@ -27,6 +29,7 @@ def detect_device():
 def process_questions(filename: str):
     img = Image.open((IMG_DIR / filename).as_posix()).convert("RGB")
     questions = [str(question.value) for question in Questions]
+    print("Processing file:", filename)
 
     all_ans = []
     for i in range(0, len(questions), BATCH_SIZE):
@@ -39,11 +42,10 @@ def process_questions(filename: str):
         all_ans.extend(batch_question_answers)
 
     out = dict(zip(questions, all_ans))
-    
     filename = Path(filename).with_suffix(".json")
     out_path = QUESTIONS_DIR / filename
-
     out_path.write_text(str(out))
+    print("\tSaved answers to:", out_path)
 
 
 device, dtype = detect_device()
