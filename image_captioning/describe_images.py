@@ -6,7 +6,7 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-BATCH_SIZE = 8
+BATCH_SIZE = 4
 
 IMG_DIR = Path("./images")
 ANSWER_DIR = Path("./image_descriptions_att")
