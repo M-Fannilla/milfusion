@@ -1,6 +1,7 @@
+import torch
+from tqdm import tqdm
 import pandas as pd
 from PIL import Image
-from tqdm import tqdm
 from pathlib import Path
 from model import moondream, moondream_tokenizer
 
@@ -12,15 +13,10 @@ IMG_DIR.mkdir(exist_ok=True)
 ANSWER_DIR.mkdir(exist_ok=True)
 
 
-def process_images(batch_filenames: list[str]):
-    batch_images = [
-        Image.open((IMG_DIR / filename).as_posix()).convert("RGB")
-        for filename in batch_filenames
-    ]
-    batch_answers = moondream.batch_answer(
-        images=batch_images,
+def process_images(model, tokenizer, batch_descriptions: list[str]):
+    batch_answers = model.batch_answer(
         prompts=["Describe this picture."] * len(batch_filenames),
-        tokenizer=moondream_tokenizer,
+        tokenizer=tokenizer,
     )
     save_description_batch(batch_filenames, batch_answers)
 
@@ -32,7 +28,7 @@ def save_description_batch(filenames: list[str], descriptions: list[str]):
 
 
 if __name__ == "__main__":
-    df = pd.read_csv(CAPTION_DIR / "image_resolutions.csv")
+    df = pd.read_csv(CAPTION_DIR / "filenames_with_descriptions.csv")
 
     min_width = 640
     min_height = 640
@@ -51,7 +47,9 @@ if __name__ == "__main__":
     total = len(filenames)
     for i in tqdm(range(0, total, BATCH_SIZE)):
         process_images(
-            batch_filenames=filenames[i:i + BATCH_SIZE]
+            batch_filenames=filenames[i:i + BATCH_SIZE],
+            model=moondream,
+            tokenizer=moondream_tokenizer
         )
 
     print("Processing complete and CSV file saved.")

@@ -4,9 +4,8 @@ import torch
 import pandas as pd
 from PIL import Image
 from tqdm import tqdm
-from transformers import AutoTokenizer, AutoModelForCausalLM
-
 from questions import Questions
+from model import moondream, moondream_tokenizer
 from utils import IMG_DIR, ANSWER_DIR, QUESTIONS_DIR, CAPTION_DIR
 
 BATCH_SIZE = 8
@@ -34,10 +33,10 @@ def process_questions(filename: str):
     all_ans = []
     for i in range(0, len(questions), BATCH_SIZE):
         batch_questions = questions[i:i + BATCH_SIZE]
-        batch_question_answers = model.batch_answer(
+        batch_question_answers = moondream.batch_answer(
             images=[img] * len(batch_questions),
             prompts=batch_questions,
-            tokenizer=tokenizer,
+            tokenizer=moondream_tokenizer,
         )
         all_ans.extend(batch_question_answers)
 
@@ -47,20 +46,6 @@ def process_questions(filename: str):
     out_path.write_text(str(out))
     print("\tSaved answers to:", out_path)
 
-
-device, dtype = detect_device()
-print("Using device:", device)
-
-tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
-print("Tokenizer loaded successfully")
-
-model = AutoModelForCausalLM.from_pretrained(
-    model_id, trust_remote_code=True, revision=revision,
-).to(device=device)
-
-print("Model loaded successfully")
-model.eval()
-print("Setting model in evaluation mode")
 
 if __name__ == "__main__":
     df = pd.read_csv(CAPTION_DIR / "image_resolutions.csv")
