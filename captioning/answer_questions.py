@@ -1,10 +1,11 @@
-from pathlib import Path
+import json
 
 import torch
 import pandas as pd
 from PIL import Image
 from tqdm import tqdm
-from questions import Questions
+from pathlib import Path
+from questions import ImageQuestions
 from model import moondream, moondream_tokenizer
 from utils import IMG_DIR, ANSWER_DIR, QUESTIONS_DIR, CAPTION_DIR
 
@@ -27,7 +28,7 @@ def detect_device():
 
 def process_questions(filename: str):
     img = Image.open((IMG_DIR / filename).as_posix()).convert("RGB")
-    questions = [str(question.value) for question in Questions]
+    questions = [str(question.value) for question in ImageQuestions]
 
     all_ans = []
     for i in range(0, len(questions), BATCH_SIZE):
@@ -39,18 +40,19 @@ def process_questions(filename: str):
         )
         all_ans.extend(batch_question_answers)
 
-    out = dict(zip(questions, all_ans))
+    data = dict(zip([str(question.name) for question in ImageQuestions], all_ans))
     filename = Path(filename).with_suffix(".json")
     out_path = QUESTIONS_DIR / filename
-    out_path.write_text(str(out))
-    print("\tSaved answers to:", out_path)
+
+    with open(out_path, 'w') as f:
+        json.dump(data, f)
 
 
 if __name__ == "__main__":
     df = pd.read_csv(CAPTION_DIR / "image_resolutions.csv")
 
-    min_width = 640
-    min_height = 640
+    min_width = 512
+    min_height = 512
 
     df = df[
         (df.width > min_width)
@@ -67,6 +69,5 @@ if __name__ == "__main__":
         print(f"Processing {i}/{len(filenames)}: {filename}")
         process_questions(filename)
         print()
-
 
     print("Processing complete and CSV file saved.")

@@ -1,16 +1,30 @@
 import enum
 
 
-class ImageQuestion:
+class Question:
     def __init__(
             self,
             question: str,
             options: list[str] | None = None,
+            options_suffix: str | None = None,
+            options_prefix: str | None = None,
             else_option: str = "no_info"
     ):
         self.question = question
-        self.options = options
+        self.options_suffix = options_suffix
+        self.options_prefix = options_prefix
+        self.options = self._build_options(options)
         self.else_option = else_option
+
+    def _build_options(self, options: list[str] | None):
+        if options:
+            if self.options_prefix:
+                return [f"{self.options_prefix} {option}" for option in options]
+            elif self.options_suffix:
+                return [f"{option} {self.options_suffix}" for option in options]
+            else:
+                return options
+        return None
 
     def __str__(self):
         if self.options:
@@ -20,48 +34,100 @@ class ImageQuestion:
                     "Choose from: ",
                     ", ".join(self.options),
                     "or", self.else_option,
-                    "if can't determine."
+                    "if can't determine or not visible.",
+                    "If option is not on the list generate one that shortly answers the question.",
                 ]
             )
         else:
             return " ".join(
                 [
                     self.question,
-                    "If can't determine:",
+                    "If can't determine output:",
                     f"{self.else_option}."
                 ]
             )
 
 
-class Questions(enum.Enum):
-    HairColor = ImageQuestion("What hairstyle and color does this person have?")
-    Physique = ImageQuestion(
-        "What is the person’s physique?",
-        ["slim", "athletic", "muscular", "stout", "plump", "curvy"]
+class ImageQuestions(enum.Enum):
+    PhotoDescription = Question(
+        question="Shortly describe the image."
     )
-    BreastSize = ImageQuestion(
-        "What is the breast size of the person?",
-        ["small", "medium", "large", "very large"]
+    ActionsDescription = Question(
+        question="What is the person in the image doing?"
     )
-    Age = ImageQuestion(
-        "In which age group does the person fall?",
-        ["30s", "40s", "50s", "60s"]
+    HairColor = Question(
+        question="What is the hair color of the person?",
+        options=["black", "brown", "blonde", "red", "gray", "white"]
     )
-    Expression = ImageQuestion("What expression is the person showing?")
-    Clothing = ImageQuestion("What kind of clothing is the person wearing?")
-    ClothingDistinction = ImageQuestion("Can you distinct what this woman is wearing?")
-    Accessories = ImageQuestion("What accessories is the person wearing or holding?")
-    SkinTone = ImageQuestion("What is the person’s skin tone?")
-    Posture = ImageQuestion("What is the person’s posture?")
-    Location = ImageQuestion("Where is the person located?")
-    Orientation = ImageQuestion("What is the orientation of the person in the image?")
-    Setting = ImageQuestion("Where is the scene set?")
-    EnvironmentSetting = ImageQuestion("Where is the scene set?")
-    ShotContextFrame = ImageQuestion("What type of shot frame is being used?")
-    ShotContextFocus = ImageQuestion("What part of the body is the primary focus of the image?")
+    HairStyle = Question(
+        question="What hairstyle does this person have?",
+        options=["straight", "curly", "wavy", "updo", "ponytail", "braid"]
+    )
+    Physique = Question(
+        question="What is the person’s physique?",
+        options=["slim", "athletic", "curvy", "plus size"]
+    )
+    BustSize = Question(
+        question="What is the bust size of the person?",
+        options=["small", "medium", "large", "very large"]
+    )
+    AgeGroup = Question(
+        question="What age group does the person belong to?",
+        options=["teenager", "young adult", "middle-aged", "senior"]
+    )
+    FacialExpression = Question(
+        question="What facial expression is the person showing?",
+        options=["smiling", "frowning", "neutral", "surprised", "suggestive", "playful", "neutral", "laughing"]
+    )
+    ClothingCategory = Question(
+        question="What type of clothing is the person wearing?",
+        options=[
+            "casual", "formal", "sportswear", "swimwear", "evening wear", "bra only",
+            "panties only", "topless", "bottomless", "fully nude"
+        ]
+    )
+    WornAccessories = Question(
+        question="What accessories is the person wearing?",
+        options=["hat", "glasses", "earrings", "necklace", "bracelet", "watch", "handbag"]
+    )
+    SkinTone = Question(
+        question="What is the person's skin tone?",
+        options=["light", "medium", "dark", "olive", "tan", "pale", "fair", "brown"]
+    )
+    BodyPosture = Question(
+        question="What is the person’s body posture?",
+        options=[
+            "standing", "sitting", "lying down", "kneeling",
+            "bent over", "sexy pose", "exposing", "relaxed"
+        ]
+    )
+    GeneralLocation = Question(
+        question="Where is the person located?",
+        options=["indoors", "outdoors", "kitchen", "bedroom", "bathroom", "living room", "work place", "beach"]
+    )
+    PersonOrientation = Question(
+        "What is the orientation of the person to towards camera?",
+        options=["front", "back", "side", "three-quarters", "overhead", "underneath", "close-up", "full body"]
+    )
+    ShotContextFocus = Question(
+        "What part of the body is the primary focus of the image?",
+        options=[
+            "face", "chest", "hips", "legs", "feet", "back", "butt",
+            "genitals", "breasts", "torso", "arms", "neck",
+            "hair", "eyes", "mouth"
+        ]
+    )
+    ImageType = Question(
+        question="What type of image is this?",
+        options=[
+            "portrait", "full body", "candid", "fashion", "close-up",
+            "professional", "selfie", "posed", "suggestive", "erotic"
+        ]
+    )
 
 
 if __name__ == "__main__":
-    print(f"Questions to ask about an image: {len(Questions)}")
-    for question in Questions:
+    print(f"Questions to ask about an image: {len(ImageQuestions)}")
+    for question in ImageQuestions:
         print(question.value)
+        print()
