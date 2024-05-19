@@ -11,8 +11,8 @@ from utils import IMG_DIR, ANSWER_DIR, QUESTIONS_DIR, CAPTION_DIR
 
 BATCH_SIZE = 8
 
-IMG_DIR.mkdir(exist_ok=True)
-ANSWER_DIR.mkdir(exist_ok=True)
+# IMG_DIR.mkdir(exist_ok=True)
+# ANSWER_DIR.mkdir(exist_ok=True)
 QUESTIONS_DIR.mkdir(exist_ok=True)
 
 revision = "2024-05-08"
