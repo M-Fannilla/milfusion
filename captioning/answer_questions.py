@@ -66,8 +66,12 @@ if __name__ == "__main__":
     print("Starting to process images...")
 
     for i, filename in enumerate(filenames):
-        print(f"Processing {i}/{len(filenames)}: {filename}")
-        process_questions(filename)
-        print()
+        _name_check = Path(filename).with_suffix(".json")
+        if (QUESTIONS_DIR / Path(filename).with_suffix(".json")).exists():
+            print(f"Image {filename} already processed.")
+        else:
+            print(f"Processing {i}/{len(filenames)}: {filename}")
+            process_questions(filename)
+            print()
 
     print("Processing complete and CSV file saved.")
