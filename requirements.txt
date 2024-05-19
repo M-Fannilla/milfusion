@@ -6,3 +6,4 @@ plotly
 einops
 torchvision
 transformers
+flash-attn
