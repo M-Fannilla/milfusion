@@ -1,0 +1,8 @@
+gradio
+torch
+lightning
+pillow
+plotly
+einops
+torchvision
+transformers
