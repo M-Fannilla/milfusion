@@ -26,7 +26,7 @@ def detect_device():
 
 def process_questions(filename: str):
     img = Image.open((IMG_DIR / filename).as_posix()).convert("RGB")
-    questions = [question.value for question in Questions]
+    questions = [str(question.value) for question in Questions]
 
     all_ans = []
     for i in range(0, len(questions), BATCH_SIZE):
@@ -39,7 +39,10 @@ def process_questions(filename: str):
         all_ans.extend(batch_question_answers)
 
     out = dict(zip(questions, all_ans))
-    out_path = ANSWER_DIR / f"{filename}.json"
+    
+    filename = Path(filename).with_suffix(".json")
+    out_path = QUESTIONS_DIR / filename
+
     out_path.write_text(str(out))
 
 
