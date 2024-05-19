@@ -11,6 +11,9 @@ BATCH_SIZE = 8
 IMG_DIR.mkdir(exist_ok=True)
 ANSWER_DIR.mkdir(exist_ok=True)
 
+prompt_short = "Describe the image."
+prompt_long = "Provide a detailed description of the image, including key elements like colors, textures, and the composition of objects. This description will be used to train generative AI, enhancing its ability to recognize and replicate similar visuals accurately."
+
 
 def process_images(batch_filenames: list[str]):
     batch_images = [
@@ -19,7 +22,7 @@ def process_images(batch_filenames: list[str]):
     ]
     batch_answers = moondream.batch_answer(
         images=batch_images,
-        prompts=["Describe this picture."] * len(batch_filenames),
+        prompts=[prompt_long] * len(batch_filenames),
         tokenizer=moondream_tokenizer,
     )
     save_description_batch(batch_filenames, batch_answers)
