@@ -6,10 +6,10 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-BATCH_SIZE = 4
+BATCH_SIZE = 8
 
-IMG_DIR = Path("./images")
-ANSWER_DIR = Path("./image_descriptions_att")
+IMG_DIR = Path("/teamspace/uploads")
+ANSWER_DIR = Path("./image_descriptions_raw")
 
 IMG_DIR.mkdir(exist_ok=True)
 ANSWER_DIR.mkdir(exist_ok=True)
@@ -25,9 +25,28 @@ def detect_device():
         return torch.device("cpu"), torch.float32
 
 
-def write_answer(file_name, answer):
-    with (ANSWER_DIR / file_name).open("w") as f:
-        f.write(answer)
+def process_images(batch_filenames: list[str]):
+    batch_images = [
+        Image.open((IMG_DIR / filename).as_posix()).convert("RGB")
+        for filename in batch_filenames
+    ]
+    batch_answers = model.batch_answer(
+        images=batch_images,
+        prompts=["Describe this picture."] * len(batch_filenames),
+        tokenizer=tokenizer,
+    )
+    save_description_batch(batch_filenames, batch_answers)
+
+
+def save_description_batch(filenames: list[str], descriptions: list[str]):
+    for filename, description in zip(filenames, descriptions):
+        df.at[filename, 'description'] = description
+
+        txt_filename = Path(filename).with_suffix('.txt')
+        txt_path = IMG_DIR / txt_filename
+
+        with open(txt_path, 'w') as file:
+            file.write(description)
 
 
 if __name__ == "__main__":
@@ -39,7 +58,7 @@ if __name__ == "__main__":
 
     model = AutoModelForCausalLM.from_pretrained(
         model_id, trust_remote_code=True, revision=revision,
-        torch_dtype=torch.float16, attn_implementation="flash_attention_2"
+        # torch_dtype=torch.float16, attn_implementation="flash_attention_2"
     ).to(device=device)
 
     print("Model loaded successfully")
@@ -61,30 +80,13 @@ if __name__ == "__main__":
     filenames = df['filename'].to_list()  # Corrected method to get filenames
     print("Starting to process images...")
 
+    # Using ThreadPoolExecutor to parallelize image processing
     with ThreadPoolExecutor() as executor:
-        for i in tqdm(range(0, len(filenames), BATCH_SIZE)):
+        total = len(filenames)
+        for i in tqdm(range(0, total, BATCH_SIZE)):
             batch_filenames = filenames[i:i + BATCH_SIZE]
-            images = [
-                Image.open((IMG_DIR / file_name).as_posix()).convert("RGB")
-                for file_name in batch_filenames
-            ]
-            answers = model.batch_answer(
-                images=images,
-                prompts=["Describe this picture."] * len(batch_filenames),
-                tokenizer=tokenizer,
-            )
+            executor.submit(process_images, batch_filenames)
 
-            for file_name, answer in zip(batch_filenames, answers):
-                file_name = file_name.lower()
-
-                if file_name.endswith(".jpeg"):
-                    file_name = file_name.replace(".jpeg", ".txt")
-                elif file_name.endswith(".jpg"):
-                    file_name = file_name.replace(".jpg", ".txt")
-                elif file_name.endswith(".png"):
-                    file_name = file_name.replace(".png", ".txt")
-                else:
-                    file_name = file_name + ".txt"
-
-                file_name = file_name.replace(".jpg", ".txt")
-                executor.submit(write_answer, file_name, answer)
+    # Save updated dataframe to new CSV file
+    df.to_csv("image_descriptions.csv")
+    print("Processing complete and CSV file saved.")
