@@ -28,14 +28,17 @@ def process_questions(filename: str):
     img = Image.open((IMG_DIR / filename).as_posix()).convert("RGB")
     questions = [question.value for question in Questions]
 
-    batch_question_answers = model.batch_answer(
-        images=[img] * len(questions),
-        prompts=questions,
-        tokenizer=tokenizer,
-    )
+    all_ans = []
+    for i in range(0, len(questions), BATCH_SIZE):
+        batch_questions = questions[i:i + BATCH_SIZE]
+        batch_question_answers = model.batch_answer(
+            images=[img] * len(batch_questions),
+            prompts=batch_questions,
+            tokenizer=tokenizer,
+        )
+        all_ans.extend(batch_question_answers)
 
-    out = {q: ans for q, ans in zip(questions, batch_question_answers)}
-
+    out = dict(zip(questions, all_ans))
     out_path = ANSWER_DIR / f"{filename}.json"
     out_path.write_text(str(out))
 
@@ -53,7 +56,6 @@ model = AutoModelForCausalLM.from_pretrained(
 print("Model loaded successfully")
 model.eval()
 print("Setting model in evaluation mode")
-
 
 if __name__ == "__main__":
     df = pd.read_csv(CAPTION_DIR / "image_resolutions.csv")
