@@ -3,13 +3,11 @@ from tqdm import tqdm
 import pandas as pd
 from PIL import Image
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-BATCH_SIZE = 8
+from utils import IMG_DIR, ANSWER_DIR
 
-IMG_DIR = Path("/teamspace/uploads")
-ANSWER_DIR = Path("./image_descriptions_fa_raw")
+BATCH_SIZE = 8
 
 IMG_DIR.mkdir(exist_ok=True)
 ANSWER_DIR.mkdir(exist_ok=True)
@@ -53,7 +51,7 @@ if __name__ == "__main__":
 
     model = AutoModelForCausalLM.from_pretrained(
         model_id, trust_remote_code=True, revision=revision,
-        torch_dtype=dtype, 
+        torch_dtype=dtype,
         attn_implementation="flash_attention_2"
     ).to(device=device)
 
