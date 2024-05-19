@@ -23,7 +23,8 @@ moondream = AutoModelForCausalLM.from_pretrained(
     torch_dtype=dtype,
     attn_implementation="flash_attention_2",
     force_download=True
-).to(device=device)
+)
+moondream.to(device=device)
 
 print("Model loaded successfully")
 moondream.eval()
