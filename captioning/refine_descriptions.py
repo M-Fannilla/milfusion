@@ -13,17 +13,17 @@ IMG_DIR.mkdir(exist_ok=True)
 ANSWER_DIR.mkdir(exist_ok=True)
 
 
-def process_images(model, tokenizer, batch_descriptions: list[str]):
-    batch_answers = model.batch_answer(
-        prompts=["Describe this picture."] * len(batch_filenames),
-        tokenizer=tokenizer,
+def process_images(batch_descriptions: list[str]):
+    batch_answers = moondream.batch_answer(
+        prompts=["Process this prompt to make it ideal for stable generative ai"] * len(batch_descriptions),
+        tokenizer=moondream_tokenizer,
     )
     save_description_batch(batch_filenames, batch_answers)
 
 
 def save_description_batch(filenames: list[str], descriptions: list[str]):
     for filename, description in zip(filenames, descriptions):
-        with open(ANSWER_DIR / Path(filename).with_suffix('.txt'), 'w') as file:
+        with open(ANSWER_DIR / Path(filename).with_suffix('_refine.txt'), 'w') as file:
             file.write(description)
 
 

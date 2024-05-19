@@ -28,7 +28,6 @@ def detect_device():
 def process_questions(filename: str):
     img = Image.open((IMG_DIR / filename).as_posix()).convert("RGB")
     questions = [str(question.value) for question in Questions]
-    print("Processing file:", filename)
 
     all_ans = []
     for i in range(0, len(questions), BATCH_SIZE):
@@ -64,7 +63,10 @@ if __name__ == "__main__":
 
     print("Starting to process images...")
 
-    for filename in tqdm(filenames):
+    for i, filename in enumerate(filenames):
+        print(f"Processing {i}/{len(filenames)}: {filename}")
         process_questions(filename)
+        print()
+
 
     print("Processing complete and CSV file saved.")

@@ -15,13 +15,14 @@ def detect_device():
 device, dtype = detect_device()
 print("Using device:", device)
 
-moondream_tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
+moondream_tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision, force_download=True)
 print("Tokenizer loaded successfully")
 
 moondream = AutoModelForCausalLM.from_pretrained(
     model_id, trust_remote_code=True, revision=revision,
     torch_dtype=dtype,
-    attn_implementation="flash_attention_2"
+    attn_implementation="flash_attention_2",
+    force_download=True
 ).to(device=device)
 
 print("Model loaded successfully")
