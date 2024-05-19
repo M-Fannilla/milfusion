@@ -42,23 +42,23 @@ def save_description_batch(filenames: list[str], descriptions: list[str]):
             file.write(description)
 
 
+device, dtype = detect_device()
+print("Using device:", device)
+
+tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
+print("Tokenizer loaded successfully")
+
+model = AutoModelForCausalLM.from_pretrained(
+    model_id, trust_remote_code=True, revision=revision,
+    torch_dtype=dtype,
+    attn_implementation="flash_attention_2"
+).to(device=device)
+
+print("Model loaded successfully")
+model.eval()
+print("Setting model in evaluation mode")
+
 if __name__ == "__main__":
-    device, dtype = detect_device()
-    print("Using device:", device)
-
-    tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
-    print("Tokenizer loaded successfully")
-
-    model = AutoModelForCausalLM.from_pretrained(
-        model_id, trust_remote_code=True, revision=revision,
-        torch_dtype=dtype,
-        attn_implementation="flash_attention_2"
-    ).to(device=device)
-
-    print("Model loaded successfully")
-    model.eval()
-    print("Setting model in evaluation mode")
-
     df = pd.read_csv("image_resolutions.csv")
 
     min_width = 640
