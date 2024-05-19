@@ -4,8 +4,8 @@ from PIL import Image
 from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-from captioning.questions import Questions
-from utils import IMG_DIR, ANSWER_DIR, QUESTIONS_DIR
+from questions import Questions
+from utils import IMG_DIR, ANSWER_DIR, QUESTIONS_DIR, CAPTION_DIR
 
 BATCH_SIZE = 8
 
@@ -48,8 +48,6 @@ print("Tokenizer loaded successfully")
 
 model = AutoModelForCausalLM.from_pretrained(
     model_id, trust_remote_code=True, revision=revision,
-    torch_dtype=dtype,
-    attn_implementation="flash_attention_2"
 ).to(device=device)
 
 print("Model loaded successfully")
@@ -58,7 +56,7 @@ print("Setting model in evaluation mode")
 
 
 if __name__ == "__main__":
-    df = pd.read_csv("image_resolutions.csv")
+    df = pd.read_csv(CAPTION_DIR / "image_resolutions.csv")
 
     min_width = 640
     min_height = 640
