@@ -1,41 +1,71 @@
+import os
+from pathlib import Path
+
 import gradio as gr
+import pandas as pd
+from PIL import Image
 
-secret_word = "gradio"
+from captioning.utils import CAPTION_DIR, IMG_DIR
 
+# Load data from CSV
+data = pd.read_csv('image_data.csv')
+
+
+def update_image_properties(index, **properties):
+    # Update the DataFrame with new values
+    for key, value in properties.items():
+        data.at[index, key] = value
+    data.at[index, 'status'] = "reviewed"
+    return "Properties Updated!"
+
+
+def show_images(image_index):
+    image_path = data.iloc[image_index]['filename']
+
+    for true_filename in os.listdir(IMG_DIR):
+        if Path(true_filename).stem.lower() == image_path:
+            image_path = true_filename
+            break
+
+    image = Image.open(IMG_DIR / image_path)
+
+    properties = {col: data.iloc[image_index][col] for col in data.columns if col not in ['filename']}
+
+    # Return image and dynamic properties
+    return [image] + list(properties.values())
+
+
+# Gradio interface
 with gr.Blocks() as demo:
-    used_letters_var = gr.State([])
-    with gr.Row() as row:
+    with gr.Row():
         with gr.Column():
-            input_letter = gr.Textbox(label="Enter letter")
-            btn = gr.Button("Guess Letter")
+            outputs = [gr.Image()]
+            image_index = gr.Dropdown(label="Select Image", choices=list(range(len(data))))
+            inputs = [image_index]
+
         with gr.Column():
-            hangman = gr.Textbox(
-                label="Hangman",
-                value="_" * len(secret_word)
+            property_widgets = {}
+
+            data_cols = list(data.columns)
+            data_cols.remove('filename')
+
+            for col in data_cols:
+                if col == 'status':
+                    widget = gr.Checkbox
+                else:
+                    widget = gr.Textbox
+
+                property_widgets[col] = widget(label=col)
+                outputs.append(property_widgets[col])
+                inputs.append(property_widgets[col])
+
+            update_button = gr.Button("Update Properties")
+            update_button.click(
+                fn=update_image_properties,
+                inputs=inputs,
+                outputs=gr.Textbox()
             )
-            used_letters_box = gr.Textbox(label="Used Letters")
 
+            image_index.change(fn=show_images, inputs=image_index, outputs=outputs)
 
-    def guess_letter(letter, used_letters):
-        used_letters.append(letter)
-        answer = "".join([
-            (letter if letter in used_letters else "_")
-            for letter in secret_word
-        ])
-        return {
-            used_letters_var: used_letters,
-            used_letters_box: ", ".join(used_letters),
-            hangman: answer
-        }
-
-
-    btn.click(
-        guess_letter,
-        [input_letter, used_letters_var],
-        [used_letters_var, used_letters_box, hangman]
-    )
-
-
-if __name__ == "__main__":
-    # Launch the application
-    demo.launch()
+demo.launch()
