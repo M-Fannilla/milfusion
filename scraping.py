@@ -13,17 +13,23 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
+"""
+Possible sites:
+- https://idealmature.com/
+"""
+
 categories = [
     # "mature","amateur", "milf",
     # "tags/mature-amateur",
-    "lingerie", "sexy",
-    # "cougar",
-    # "stockings", "housewife", "saggy-tits", "chubby", "redhead", "undressing", "curvy",
-    # "non-nude", "teen", "selfie", "ebony", "ass", "natural-tits", "hairy", "beautiful",
-    # "secretary", "spreading", "masturbation", "thick", "upskirt", "tattoo", "skinny",
-    # "short-hair", "bikini", "panties", "babe", "feet", "latina", "solo", "shaved",
-    # "skirt", "glasses", "latex", "girlfriend", "clothed", "brunette", "pantyhose",
-    # "shorts", "brazilian", "face", "bath", "jeans", "boots", "hot-naked-women"
+    # "lingerie",
+    # "sexy",
+    "cougar",
+    "stockings", "housewife", "saggy-tits", "chubby", "redhead", "undressing", "curvy",
+    "non-nude", "teen", "selfie", "ebony", "ass", "natural-tits", "hairy", "beautiful",
+    "secretary", "spreading", "masturbation", "thick", "upskirt", "tattoo", "skinny",
+    "short-hair", "bikini", "panties", "babe", "feet", "latina", "solo", "shaved",
+    "skirt", "glasses", "latex", "girlfriend", "clothed", "brunette", "pantyhose",
+    "shorts", "brazilian", "face", "bath", "jeans", "boots", "hot-naked-women"
 ]
 
 
