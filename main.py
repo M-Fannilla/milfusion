@@ -5,7 +5,7 @@ import gradio as gr
 import pandas as pd
 from PIL import Image
 
-from captioning.utils import CAPTION_DIR, IMG_DIR
+from captioning.utils import IMG_DIR
 
 # Load data from CSV
 data = pd.read_csv('image_data.csv')
