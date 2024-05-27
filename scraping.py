@@ -14,28 +14,16 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
-"""
-Possible sites:
-- https://idealmature.com
-"""
-
 gcp = [
-    'masturbation', 'thick', 'tattoo', 'upskirt', 'skinny', 'short-hair', 'bikini', 'babe', 'panties', 'feet',
-    'latina', 'asian', 'bath', 'big-tits', 'blonde', 'bondage', 'boots', 'brazilian', 'brunette', 'centerfold',
-    'clothed', 'college', 'cosplay', 'christmas', 'doggystyle', 'european', 'face', 'fake-tits', 'uniform',
-    'girlfriend', 'glamour', 'glasses', 'granny', 'hairy', 'high-heels', 'homemade', 'hot-naked-women'
-]
-
-completed_categories = [
-    'japanese', 'jeans', 'latex', 'legs', 'maid', 'model', 'skirt', 'mom',
-    # 'yoga-pants', 'natural-tits', 'nipples', 'nude', 'nurse', 'office', 'oiled', 'pantyhose', 'pool', 'pornstar',
-    # 'shaved', 'shorts', 'smoking', 'socks', 'solo', 'sports', 'thai', 'thong', 'white',"amateur",
-]
-
-categories = [
-    "milf", "lingerie", "sexy", "selfie", "stockings", "housewife", "saggy-tits",
-    "chubby", "redhead", "beautiful", "cougar", "undressing", "curvy", "non-nude", "teen", "ebony",
-    "ass", "smoking", "mature", "secretary", "spreading"
+    'amateur', 'asian', 'ass', 'babe', 'bath', 'beautiful', 'big-tits', 'bikini', 'blonde', 'bondage', 'boots',
+    'brazilian', 'brunette', 'centerfold', 'christmas', 'chubby', 'clothed', 'college', 'cosplay', 'cougar', 'curvy',
+    'doggystyle', 'ebony', 'european', 'face', 'fake-tits', 'feet', 'girlfriend', 'glamour', 'glasses', 'granny',
+    'hairy', 'high-heels', 'homemade', 'hot-naked-women', 'housewife', 'japanese', 'jeans', 'latex', 'latina',
+    'legs', 'lingerie', 'maid', 'masturbation', 'mature', 'milf', 'model', 'mom', 'natural-tits', 'nipples',
+    'non-nude', 'nude', 'nurse', 'office', 'oiled', 'panties', 'pantyhose', 'pool', 'pornstar', 'redhead',
+    'saggy-tits', 'secretary', 'selfie', 'sexy', 'shaved', 'short-hair', 'shorts', 'skinny', 'skirt', 'smoking',
+    'smoking', 'socks', 'solo', 'sports', 'spreading', 'stockings', 'tattoo', 'teen', 'thai', 'thick', 'thong',
+    'undressing', 'uniform', 'upskirt', 'white', 'yoga-pants'
 ]
 
 
@@ -72,7 +60,7 @@ class ImageScraper:
         print(f"{scrolls}: Scrolling", end='')
         while True:
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            time.sleep(2)  # Adjust this depending on the site's loading time
+            time.sleep(3)  # Adjust this depending on the site's loading time
             new_height = self.driver.execute_script("return document.body.scrollHeight")
             if new_height == last_height:
                 print("Reached the bottom of the page.")
@@ -85,7 +73,7 @@ class ImageScraper:
         """Fetches currently available gallery links on the page using explicit waits."""
         links = []
         try:
-            tiles_ul = WebDriverWait(self.driver, 2).until(
+            tiles_ul = WebDriverWait(self.driver, 3).until(
                 EC.presence_of_element_located((By.ID, 'tiles'))
             )
             list_items = tiles_ul.find_elements(By.CLASS_NAME, 'rel-link')
@@ -122,7 +110,7 @@ class ImageScraper:
         self.driver.get(gallery_url)
         links = []
         try:
-            tiles_ul = WebDriverWait(self.driver, 2).until(
+            tiles_ul = WebDriverWait(self.driver, 3).until(
                 EC.presence_of_element_located((By.CLASS_NAME, 'gallery-info'))
             )
 
