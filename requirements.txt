@@ -6,5 +6,7 @@ plotly
 einops
 torchvision
 transformers
-flash-attn
 google-cloud-storage
+aiohttp
+aiofiles
+tqdm
