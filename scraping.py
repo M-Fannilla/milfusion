@@ -22,8 +22,8 @@ gcp = [
     'legs', 'lingerie', 'maid', 'masturbation', 'mature', 'milf', 'model', 'mom', 'natural-tits', 'nipples',
     'non-nude', 'nude', 'nurse', 'office', 'oiled', 'panties', 'pantyhose', 'pool', 'pornstar', 'redhead',
     'saggy-tits', 'secretary', 'selfie', 'sexy', 'shaved', 'short-hair', 'shorts', 'skinny', 'skirt', 'smoking',
-    'smoking', 'socks', 'solo', 'sports', 'spreading', 'stockings', 'tattoo', 'teen', 'thai', 'thick', 'thong',
-    'undressing', 'uniform', 'upskirt', 'white', 'yoga-pants'
+    'socks', 'solo', 'sports', 'spreading', 'stockings', 'tattoo', 'teen', 'thai', 'thick', 'thong', 'undressing',
+    'uniform', 'upskirt', 'white', 'yoga-pants'
 ]
 
 
