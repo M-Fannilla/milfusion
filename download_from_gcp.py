@@ -1,74 +1,66 @@
 import os
+import concurrent
 from tqdm import tqdm
+from tqdm import tqdm
+import multiprocessing
+from pathlib import Path
 import concurrent.futures
 from google.cloud import storage
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
+
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "/teamspace/uploads/fannilla-cfd25ffd1b7c.json"
+
+BUCKET_NAME = 'pornpics_scrape'
+CLIENT = storage.Client()
+BUCKET = CLIENT.bucket(BUCKET_NAME)
+DESTINATION_FOLDER = "./images"
+
+CATEGORIES = [
+        'amateur', 'bath', 'big-tits', 'bikini', 'blonde', 'boots', 'brunette', 'centerfold', 'christmas', 
+        'chubby', 'clothed', 'cougar', 'curvy', 'doggystyle', 'face', 'fake-tits', 'feet', 'glasses', 'granny', 
+        'hairy', 'high-heels', 'homemade', 'housewife', 'jeans', 'legs', 'lingerie', 'maid', 'masturbation', 'mature', 
+        'milf', 'model', 'mom', 'natural-tits', 'non-nude', 'nurse', 'office', 'panties', 'pantyhose', 'pool', 
+        'pornstar', 'redhead', 'saggy-tits', 'secretary', 'selfie', 'sexy', 'shaved', 'short-hair', 'shorts', 'skinny', 
+        'skirt', 'smoking', 'socks', 'solo', 'spreading', 'stockings', 'thick', 'thong', 'undressing', 'upskirt', 'white',
+        'asian', 'ass', 'babe', 'beautiful', 'bondage', 'brazilian', 'college', 'cosplay', 'ebony', 'european', 'girlfriend', 
+        'glamour', 'japanese', 'latex', 'latina', 'nipples', 'nude', 'oiled', 'sports', 'tattoo', 'teen', 
+        'thai', 'uniform', 'yoga-pants'
+    ]
+
+BUCKET_NAME = 'pornpics_scrape'
 
 
-# os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "/teamspace/uploads/fannilla-cfd25ffd1b7c.json"
 
-def fetch_all_blobs(bucket_name, folder_prefix):
+def fetch_all_blobs(folder_prefix: str = None):
     """Fetch all file paths from the GCS bucket."""
-    storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
-    blobs = bucket.list_blobs(prefix=folder_prefix)
+    blobs = BUCKET.list_blobs(prefix=folder_prefix)
     return [blob.name for blob in blobs]
 
-
-def download_blob(bucket_name, blob_name, destination_folder, force_download, progress_bar):
+def download_blob(b, destination_folder, force_download, pbar):
     """Download a blob from the GCS bucket."""
-    storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(blob_name)
+    file_path = Path(destination_folder) / b
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    if not force_download and file_path.exists():
+        pbar.update(1)
+        return
+    BUCKET.blob(b).download_to_filename(file_path.as_posix())
+    pbar.update(1)
 
-    local_path = os.path.join(destination_folder, blob_name)
-    os.makedirs(os.path.dirname(local_path), exist_ok=True)
-
-    if not os.path.exists(local_path) or force_download:
-        blob.download_to_filename(local_path)
-        progress_bar.set_description(f"Downloaded {blob_name}")
-    else:
-        progress_bar.set_description(f"Skipped {blob_name}, file already exists")
-
-    progress_bar.update(1)
-
-
-def download_bucket(bucket_name, destination_folder, folder_prefix, force_download=False):
-    """Download the entire GCS bucket to the local folder."""
-    blobs = fetch_all_blobs(bucket_name, folder_prefix)
-    print(f"Found {len(blobs)} files in the bucket {bucket_name}")
-
-    with tqdm(total=len(blobs), desc="Downloading files") as progress_bar:
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            futures = [
-                executor.submit(download_blob, bucket_name, blob_name, destination_folder, force_download, progress_bar)
-                for blob_name in blobs
-            ]
+def download_category(category_blobs, destination_folder, force_download, pbar_position):
+    """Download a category of blobs from the GCS bucket."""
+    with tqdm(total=len(category_blobs), desc=f"Category {category_blobs[0].split('/')[0]}", position=pbar_position) as pbar:
+        with ThreadPoolExecutor() as executor:
+            futures = [executor.submit(download_blob, b, destination_folder, force_download, pbar) for b in category_blobs]
             for future in concurrent.futures.as_completed(futures):
-                try:
-                    future.result()
-                except Exception as e:
-                    print(f"Error downloading file: {e}")
-                    progress_bar.update(1)
-
+                future.result()  # To raise any exceptions
 
 if __name__ == "__main__":
-    # gcp = [
-    #     'amateur', 'bath', 'big-tits', 'bikini', 'blonde', 'boots', 'brunette', 'centerfold', 'christmas', 'chubby',
-    #     'clothed', 'cougar', 'curvy', 'doggystyle', 'face', 'fake-tits', 'feet', 'glasses', 'granny',
-    #     'hairy', 'high-heels', 'homemade', 'housewife', 'jeans', 'legs', 'lingerie', 'maid', 'masturbation', 'mature',
-    #     'milf', 'model', 'mom', 'natural-tits', 'non-nude', 'nude', 'nurse', 'office', 'panties', 'pantyhose', 'pool',
-    #     'pornstar', 'redhead', 'saggy-tits', 'secretary', 'selfie',
-    #     'sexy', 'shaved', 'short-hair', 'shorts', 'skinny',
-    #     'skirt', 'smoking', 'socks', 'solo', 'spreading', 'stockings', 'thick', 'thong', 'undressing', 'upskirt', 'white'
-    # ]
-
-    gcp = ['mature', ]
-
-    BUCKET_NAME = 'pornpics_scrape'
-
-    for prefix in gcp:
-        DESTINATION_FOLDER = f"./images"
-        if not os.path.exists(DESTINATION_FOLDER):
-            os.makedirs(DESTINATION_FOLDER)
-
-        download_bucket(BUCKET_NAME, DESTINATION_FOLDER, prefix, False)
+    manager = multiprocessing.Manager()
+    with ProcessPoolExecutor(max_workers=32) as executor:
+        futures = [
+            executor.submit(download_category, fetch_all_blobs(folder_prefix=category), DESTINATION_FOLDER, False, i) 
+            for i, category in enumerate(CATEGORIES)
+        ]
+        
+        for _ in concurrent.futures.as_completed(futures):
+            pass
