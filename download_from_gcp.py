@@ -1,12 +1,12 @@
 import os
 import concurrent
 from tqdm import tqdm
-from pathlib import Path
-from google.cloud import storage
-import multiprocessing
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from tqdm import tqdm
+import multiprocessing
+from pathlib import Path
 import concurrent.futures
+from google.cloud import storage
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "/teamspace/uploads/fannilla-cfd25ffd1b7c.json"
 
@@ -16,12 +16,15 @@ BUCKET = CLIENT.bucket(BUCKET_NAME)
 DESTINATION_FOLDER = "./images"
 
 CATEGORIES = [
-        'amateur', 'bath', 'big-tits', 'bikini', 'blonde', 'boots', 'brunette', 'centerfold', 'christmas', 
-        'chubby', 'clothed', 'cougar', 'curvy', 'doggystyle', 'face', 'fake-tits', 'feet', 'glasses', 'granny', 
-        'hairy', 'high-heels', 'homemade', 'housewife', 'jeans', 'legs', 'lingerie', 'maid', 'masturbation', 'mature', 
-        'milf', 'model', 'mom', 'natural-tits', 'non-nude', 'nurse', 'office', 'panties', 'pantyhose', 'pool', 
-        'pornstar', 'redhead', 'saggy-tits', 'secretary', 'selfie', 'sexy', 'shaved', 'short-hair', 'shorts', 'skinny', 
-        'skirt', 'smoking', 'socks', 'solo', 'spreading', 'stockings', 'thick', 'thong', 'undressing', 'upskirt', 'white'
+        # 'amateur', 'bath', 'big-tits', 'bikini', 'blonde', 'boots', 'brunette', 'centerfold', 'christmas', 
+        # 'chubby', 'clothed', 'cougar', 'curvy', 'doggystyle', 'face', 'fake-tits', 'feet', 'glasses', 'granny', 
+        # 'hairy', 'high-heels', 'homemade', 'housewife', 'jeans', 'legs', 'lingerie', 'maid', 'masturbation', 'mature', 
+        # 'milf', 'model', 'mom', 'natural-tits', 'non-nude', 'nurse', 'office', 'panties', 'pantyhose', 'pool', 
+        # 'pornstar', 'redhead', 'saggy-tits', 'secretary', 'selfie', 'sexy', 'shaved', 'short-hair', 'shorts', 'skinny', 
+        # 'skirt', 'smoking', 'socks', 'solo', 'spreading', 'stockings', 'thick', 'thong', 'undressing', 'upskirt', 'white',
+        'asian', 'ass', 'babe', 'beautiful', 'bondage', 'brazilian', 'college', 'cosplay', 'ebony', 'european', 'girlfriend', 
+        'glamour', 'hot-naked-women', 'japanese', 'latex', 'latina', 'nipples', 'nude', 'oiled', 'sports', 'tattoo', 'teen', 
+        'thai', 'uniform', 'yoga-pants'
     ]
 
 BUCKET_NAME = 'pornpics_scrape'
