@@ -17,13 +17,6 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/image_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
       </map>
     </option>
   </component>
