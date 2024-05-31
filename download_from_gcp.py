@@ -1,12 +1,9 @@
-import os
-import concurrent
+import asyncio
 from tqdm import tqdm
-from tqdm import tqdm
-import multiprocessing
+from typing import List
 from pathlib import Path
-import concurrent.futures
 from google.cloud import storage
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 
 # os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "/teamspace/uploads/fannilla-cfd25ffd1b7c.json"
 
@@ -28,39 +25,38 @@ CATEGORIES = [
 ]
 
 
-def fetch_all_blobs(folder_prefix: str = None):
+def fetch_all_blobs(folder_prefix: str) -> List[str]:
     """Fetch all file paths from the GCS bucket."""
-    blobs = BUCKET.list_blobs(prefix=f"pics/{folder_prefix}")
-    return [blob.name for blob in blobs]
+    _blobs = BUCKET.list_blobs(prefix=f"pics/{folder_prefix}")
+    return [blob.name for blob in _blobs]
 
 
-def download_blob(b: str, force_download, pbar):
+def download_blob(blob_name: str, force_download: bool, pbar: tqdm) -> None:
     """Download a blob from the GCS bucket."""
-    file_path = DESTINATION_FOLDER / b.replace("pics/", "")
+    file_path = DESTINATION_FOLDER / blob_name.replace("pics/", "")
 
     file_path.parent.mkdir(parents=True, exist_ok=True)
     if not force_download and file_path.exists():
         pbar.update(1)
         return
-    BUCKET.blob(b).download_to_filename(file_path.as_posix())
+
+    BUCKET.blob(blob_name).download_to_filename(file_path.as_posix())
     pbar.update(1)
 
 
-def download_category(category_blobs, force_download):
-    """Download a category of blobs from the GCS bucket."""
-    with tqdm(
-            total=len(category_blobs), desc=f"Category {category_blobs[0].split('/')[1]}"
-    ) as pbar:
+async def download_category(category_blobs: List[str], force_download: bool) -> None:
+    loop = asyncio.get_running_loop()
+
+    with tqdm(total=len(category_blobs), desc=f"Category {category_blobs[0].split('/')[1]}") as pbar:
         with ThreadPoolExecutor() as executor:
-            futures = [
-                executor.submit(download_blob, b, force_download, pbar) for b in category_blobs
+            tasks = [
+                loop.run_in_executor(executor, download_blob, blob_name, force_download, pbar)
+                for blob_name in category_blobs
             ]
-            for future in concurrent.futures.as_completed(futures):
-                future.result()  # To raise any exceptions
+            await asyncio.gather(*tasks)
 
 
 if __name__ == "__main__":
-    manager = multiprocessing.Manager()
-    for i, category in enumerate(CATEGORIES):
-        category_blobs = fetch_all_blobs(category)
-        download_category(category_blobs, force_download=False)
+    for category in CATEGORIES:
+        blobs = fetch_all_blobs(category)
+        asyncio.run(download_category(blobs, force_download=False))
