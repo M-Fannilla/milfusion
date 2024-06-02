@@ -5,8 +5,6 @@ from pathlib import Path
 from google.cloud import storage
 from concurrent.futures import ThreadPoolExecutor
 
-# os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "/teamspace/uploads/fannilla-cfd25ffd1b7c.json"
-
 BUCKET_NAME = 'chum_bucket_stuff'
 CLIENT = storage.Client()
 
