@@ -1,6 +1,3 @@
-google-cloud-storage
-aiohttp
-aiofiles
 pillow
 xformers==0.0.24
 torch==2.2.0

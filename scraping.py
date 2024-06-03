@@ -236,7 +236,7 @@ class ImageScraper:
 if __name__ == "__main__":
     url = 'https://www.pornpics.com'
 
-    for cat in categories:
+    for cat in gcp:
         print(f"Scraping `{cat}` category...")
         image_scraper = ImageScraper(url, cat)
         image_scraper.run()
