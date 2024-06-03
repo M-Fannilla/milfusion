@@ -1,7 +1,7 @@
 import torch
 from PIL import Image
 from load_resources import get_tokenizer_and_model, DEVICE, TORCH_TYPE
-from runpod.prompts import dynamic_prompt
+from prompts.prompts import dynamic_prompt
 
 tokenizer, model = get_tokenizer_and_model(None)
 
