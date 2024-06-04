@@ -26,3 +26,32 @@ Tags should be structured for easy parsing as JSON. For example: """
 }
 """
     return prompt
+
+
+def prompt_all_categories(categories: list[str], tags: list[str]) -> str:
+    categories = [
+        'African', 'Amateur', 'Anal', 'Arab', 'Argentina', 'Armpit', 'Asian', 'Ass', 'Ass Fucking', 'Ass Licking',
+        'Asshole', 'Australian', 'BBC', 'BBW', 'BDSM', 'Babe', 'Babysitter', 'Ball Licking', 'Bath', 'Beach',
+        'Beautiful', 'Big Cock', 'Big Tits', 'Bikini', 'Bisexual', 'Blindfold', 'Blonde', 'Blowbang', 'Blowjob',
+        'Bondage', 'Brazilian', 'British', 'Brunette', 'Butt Plug', 'CFNM', 'Cameltoe', 'Canadian', 'Centerfold',
+        'Cheerleader', 'Chinese', 'Christmas', 'Chubby', 'Clothed', 'College', 'Colombian', 'Cosplay', 'Cougar',
+        'Couple', 'Cowgirl', 'Cuban', 'Cum In Mouth', 'Cum In Pussy', 'Cum Swapping', 'Cumshot', 'Curly', 'Curvy',
+        'Cute', 'Czech', 'Deepthroat', 'Dildo', 'Doctor', 'Doggy Style', 'Double Penetration', 'Dress', 'Dutch',
+        'Ebony', 'Erotic', 'European', 'Facesitting', 'Facial', 'Fake Tits', 'Filipina', 'Fingering', 'Flexible',
+        'Footjob', 'French', 'German', 'Girlfriend', 'Glamour', 'Glasses', 'Gloryhole', 'Groupsex', 'Gym', 'Hairy',
+        'Halloween', 'Handjob', 'Hardcore', 'High Heels', 'Homemade', 'Housewife', 'Humping', 'Hungarian', 'Indian',
+        'Interracial', 'Italian', 'Japanese', 'Jeans', 'Kissing', 'Kitchen', 'Korean', 'Latex', 'Latina', 'Leather',
+        'Legs', 'Lesbian', 'Lingerie', 'MILF', 'MMF', 'Maid', 'Masturbation', 'Mature', 'Mexican', 'Missionary',
+        'Model', 'Mom', 'Natural Tits', 'Nipples', 'Non Nude', 'Nun', 'Nurse', 'Office', 'Oiled', 'Old Young',
+        'Orgasm', 'Outdoor', 'PAWG', 'POV', 'Pale', 'Panties', 'Pantyhose', 'Petite', 'Pigtails', 'Police', 'Polish',
+        'Pool', 'Pornstar', 'Pretty', 'Public', 'Pussy', 'Pussy Licking', 'Reality', 'Redhead', 'Russian', 'Sandals',
+        'Schoolgirl', 'Secretary', 'Seduction', 'Selfie', 'Sexy', 'Shaved', 'Short Hair', 'Shorts', 'Shower', 'Skinny',
+        'Skirt', 'Smoking', 'Socks', 'Solo', 'Spanish', 'Spanking', 'Sports', 'Spreading', 'Squirting', 'Step Brother',
+        'Step Sister', 'Stepmom', 'Stockings', 'Tall', 'Tattoo', 'Teacher', 'Teen', 'Thai', 'Thick', 'Thong',
+        'Threesome', 'Tiny Tits', 'Titjob', 'Twins', 'Ukrainian', 'Undressing', 'Uniform', 'Upskirt', 'Venezuela',
+        'Wet', 'White', 'Wife', 'Yoga', 'Yoga Pants'
+    ]
+    return
+
+
+
