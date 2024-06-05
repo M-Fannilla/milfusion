@@ -1,39 +1,34 @@
-import multiprocessing
 import os
-import concurrent
+import asyncio
+import datetime
+import aiohttp
+import aiofiles
 import pandas as pd
-from tqdm import tqdm
+from pathlib import Path
+from tqdm.asyncio import tqdm
 from google.cloud import storage
-from concurrent.futures import ThreadPoolExecutor
 
 BUCKET_NAME = 'chum_bucket_stuff'
-TARGET_DIR = './images'
+TARGET_DIR = Path('./images')
+
+_client = storage.Client()
+_bucket = _client.bucket(BUCKET_NAME)
 
 if not os.path.exists(TARGET_DIR):
     os.makedirs(TARGET_DIR)
 
 
-def download_file(file_path):
-    client = storage.Client()
-    bucket = client.bucket(BUCKET_NAME)
-    blob = bucket.blob(f"pics/{file_path}")
-    destination_path = os.path.join(TARGET_DIR, os.path.basename(file_path.split("/")[-1]))
-    blob.download_to_filename(destination_path)
+async def download_sample_df():
+    async with aiohttp.ClientSession() as session:
+        signed_url = generate_signed_url(BUCKET_NAME, "pics/sample_df.csv")
+        await download_file(session, signed_url, TARGET_DIR / 'sample_df.csv')
 
 
-def download_files_from_dataframe(dataframe):
-    file_paths = dataframe['file_path'].tolist()
-
-    with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count() - 2) as executor:
-        futures = [
-            executor.submit(download_file, file_path)
-            for file_path in file_paths
-        ]
-
-        for future in tqdm(concurrent.futures.as_completed(futures)):
-            future.result()
+async def main():
+    await download_sample_df()
+    df = pd.read_csv(TARGET_DIR / 'sample_df.csv')
+    await download_files_from_dataframe(df)
 
 
 if __name__ == "__main__":
-    df = pd.read_csv('sample_df.csv')
-    download_files_from_dataframe(df)
+    asyncio.run(main())
