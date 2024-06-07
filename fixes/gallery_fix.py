@@ -3,8 +3,6 @@ import os
 import re
 import time
 import asyncio
-from concurrent.futures import ThreadPoolExecutor
-
 import aiohttp
 import aiofiles
 from tqdm import tqdm
@@ -12,6 +10,7 @@ from pathlib import Path
 from selenium import webdriver
 from aiohttp import ClientTimeout
 from selenium.webdriver.common.by import By
+from concurrent.futures import ThreadPoolExecutor
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
@@ -19,16 +18,14 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
 gcp = [
-    # 'amateur', 'asian', 'ass', 'babe', 'bath', 'beautiful', 'big-tits', 'bikini', 'blonde', 'bondage', 'boots',
-    # 'brazilian', 'brunette', 'centerfold', 'christmas',
-    'chubby', 'clothed', 'college', 'cosplay', 'cougar', 'curvy',
+    'amateur', 'asian', 'ass', 'babe', 'bath', 'beautiful', 'big-tits', 'bikini', 'blonde', 'bondage', 'boots',
+    'brazilian', 'brunette', 'centerfold', 'christmas', 'chubby', 'clothed', 'college', 'cosplay', 'cougar', 'curvy',
     'doggystyle', 'ebony', 'european', 'face', 'fake-tits', 'feet', 'girlfriend', 'glamour', 'glasses', 'granny',
-    'hairy', 'high-heels', 'homemade', 'hot-naked-women', 'housewife', 'japanese', 'jeans', 'latex', 'latina',
-    'legs', 'lingerie', 'maid', 'masturbation', 'mature', 'milf', 'model', 'mom', 'natural-tits', 'nipples',
-    'non-nude', 'nude', 'nurse', 'office', 'oiled', 'panties', 'pantyhose', 'pool', 'pornstar', 'redhead',
-    'saggy-tits', 'secretary', 'selfie', 'sexy', 'shaved', 'short-hair', 'shorts', 'skinny', 'skirt', 'smoking',
-    'socks', 'solo', 'sports', 'spreading', 'stockings', 'tattoo', 'teen', 'thai', 'thick', 'thong', 'undressing',
-    'uniform', 'upskirt', 'white', 'yoga-pants'
+    'hairy', 'high-heels', 'homemade', 'housewife', 'japanese', 'jeans', 'latex', 'latina', 'legs', 'lingerie',
+    'maid', 'masturbation', 'mature', 'milf', 'model', 'mom', 'natural-tits', 'nipples', 'non-nude', 'nurse',
+    'office', 'oiled', 'panties', 'pantyhose', 'pool', 'pornstar', 'redhead', 'saggy-tits', 'secretary', 'selfie',
+    'sexy', 'shaved', 'short-hair', 'shorts', 'skinny', 'skirt', 'smoking', 'socks', 'solo', 'sports', 'spreading',
+    'stockings', 'tattoo', 'teen', 'thai', 'thick', 'thong', 'undressing', 'uniform', 'upskirt', 'white', 'yoga-pants'
 ]
 
 SRC_DIR = Path('/Volumes/external_drive')

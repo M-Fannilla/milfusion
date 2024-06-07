@@ -26,7 +26,7 @@ CATEGORIES = [
 def fetch_all_blobs(folder_prefix: str) -> List[str]:
     """Fetch all file paths from the GCS bucket."""
     _blobs = BUCKET.list_blobs(prefix=f"pics/{folder_prefix}")
-    return [blob.name for blob in _blobs]
+    return [blob.name for blob in _blobs if not blob.name.split("/")[-1].startswith(".")]
 
 
 def download_blob(blob_name: str, force_download: bool, pbar: tqdm) -> None:
