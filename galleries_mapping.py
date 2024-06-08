@@ -1,3 +1,4 @@
+import pandas as pd
 from typing import TypeAlias
 
 remove_tag: TypeAlias = False
@@ -220,3 +221,9 @@ GALLERIES_MAP = {
     'yoga': remove_tag,
     'yoga pants': keep_tag,
 }
+
+""" AI GEN TAGS """
+
+AI_GEN_TAGS = pd.read_excel(
+    "ai_gen_tags.xlsx", index_col=0
+)
