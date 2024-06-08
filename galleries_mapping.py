@@ -225,5 +225,5 @@ GALLERIES_MAP = {
 """ AI GEN TAGS """
 
 AI_GEN_TAGS = pd.read_excel(
-    "ai_gen_tags.xlsx", index_col=0
+    "datasets/ai_gen_tags.xlsx", index_col=0
 )
