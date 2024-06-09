@@ -1,4 +1,5 @@
 import os
+import shutil
 from pathlib import Path
 from google.cloud import vision
 from google.cloud import storage
@@ -13,7 +14,7 @@ _path = Path("/Volumes/external_drive")
 
 try:
     (_path / '_').mkdir(exist_ok=True, parents=True)
-    os.remove(_path / '_')
+    shutil.rmtree(_path / '_')
     SRC_DIR = _path
 except PermissionError as e:
     SRC_DIR = Path("./images")

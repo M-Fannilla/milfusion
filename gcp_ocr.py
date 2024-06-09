@@ -4,11 +4,12 @@ import time
 import pandas as pd
 from tqdm import tqdm
 from pathlib import Path
+from threading import Lock
 from google.cloud import vision
 from utils import vision_client, SRC_DIR, BUCKET
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-df = pd.read_csv('datasets/ai_gen_dataset_5_cats.csv')
+df = pd.read_csv('datasets/medium_one_hot.csv')
 
 all_blobs = [Path(B) for B in df['file_path'].tolist()]
 print("Total blobs:", len(all_blobs))
@@ -43,9 +44,7 @@ def convert_string_to_vertices_list(vertices_string):
     return [{'x': int(x), 'y': int(y)} for x, y in matches]
 
 
-def get_vertices_from_response(
-        response: vision.AnnotateImageResponse
-) -> list[dict[str, int]] | None:
+def get_vertices_from_response(response: vision.AnnotateImageResponse) -> list[dict[str, int]] | None:
     if not response.text_annotations:
         return None
 
@@ -56,6 +55,7 @@ def get_vertices_from_response(
 
 
 def ocr_process(blob_name: Path):
+    force_download = True
     gcp_vertices_path = (
         f"pics/{blob_name.parent.as_posix()}/cropped/{blob_name.with_suffix('').name}.json"
     )
@@ -66,18 +66,19 @@ def ocr_process(blob_name: Path):
 
     local_vertices_path.parent.mkdir(parents=True, exist_ok=True)
 
-    if BUCKET.blob(gcp_vertices_path).exists():
-        if not local_vertices_path.exists():
-            BUCKET.blob(gcp_vertices_path).download_to_filename(local_vertices_path)
-    else:
-        if not local_vertices_path.exists():
-            response = request_ocr(
-                f"gs://{BUCKET.name}/pics/{blob_name.as_posix()}"
-            )
-            vertices = get_vertices_from_response(response)
-            with open(local_vertices_path, 'w') as json_file:
-                json.dump(vertices, json_file, indent=4)
-        BUCKET.blob(gcp_vertices_path).upload_from_filename(local_vertices_path)
+    # if BUCKET.blob(gcp_vertices_path).exists():
+    #     if not local_vertices_path.exists():
+    #         BUCKET.blob(gcp_vertices_path).download_to_filename(local_vertices_path)
+    #
+    # else:
+    if not local_vertices_path.exists() or force_download:
+        response = request_ocr(
+            f"gs://{BUCKET.name}/pics/{blob_name.as_posix()}"
+        )
+        vertices = get_vertices_from_response(response)
+        with open(local_vertices_path, 'w') as json_file:
+            json.dump(vertices, json_file, indent=4)
+    BUCKET.blob(gcp_vertices_path).upload_from_filename(local_vertices_path)
 
 
 if __name__ == '__main__':
@@ -100,3 +101,12 @@ if __name__ == '__main__':
 
         for future in tqdm(as_completed(futures), total=len(futures), desc="Processing images"):
             future.result()
+
+    except Exception as e:
+        print(">>> Interrupted <<<")
+
+    finally:
+        print(
+            "Total number of blobs processed:", len(all_blobs),
+            "| Requests made:", COUNTER
+        )
