@@ -16,3 +16,4 @@ einops
 sse-starlette
 scikit-learn
 pillow
+pandas
