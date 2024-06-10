@@ -9,10 +9,6 @@ prompt = dynamic_prompt(
     categories=[
         'Caught', 'Cowgirl', 'Cute', 'Reality', 'Hardcore', 'Girlfriend',
         'Amateur', 'Cum In Mouth', 'Russian', 'Big Cock'
-    ],
-    tags=[
-        'Amateur Teen Fuck', 'Teen Sex', 'Teen Hardcore', 'Caught Masturbating',
-        'Fuck', 'Amateur Fuck', 'Teen First Time Fuck'
     ]
 )
 

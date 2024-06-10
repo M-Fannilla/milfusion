@@ -117,8 +117,7 @@
 #     'person-count': ['*'],
 #     'photo_theme': ['*'],
 #     'sex-gadgets-types': [
-#         'vibrator', 'dildo', 'butt plug', 'anal beads', 'strap-on', 'nipple clamps',
-#         'bondage kit', 'whip'
+#         'vibrator', 'dildo', 'butt plug', 'anal beads', 'strap-on', 'bondage kit'
 #     ],
 # },
 # camera = {

@@ -9,7 +9,7 @@ from google.cloud import vision
 from utils import vision_client, SRC_DIR, BUCKET
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-df = pd.read_csv('datasets/medium_one_hot.csv')
+df = pd.read_csv('datasets/ai_gen_dataset_5_cats.csv', index_col=0)
 
 all_blobs = [Path(B) for B in df['file_path'].tolist()]
 print("Total blobs:", len(all_blobs))
@@ -55,7 +55,6 @@ def get_vertices_from_response(response: vision.AnnotateImageResponse) -> list[d
 
 
 def ocr_process(blob_name: Path):
-    force_download = True
     gcp_vertices_path = (
         f"pics/{blob_name.parent.as_posix()}/cropped/{blob_name.with_suffix('').name}.json"
     )
@@ -66,47 +65,55 @@ def ocr_process(blob_name: Path):
 
     local_vertices_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # if BUCKET.blob(gcp_vertices_path).exists():
-    #     if not local_vertices_path.exists():
-    #         BUCKET.blob(gcp_vertices_path).download_to_filename(local_vertices_path)
-    #
-    # else:
-    if not local_vertices_path.exists() or force_download:
-        response = request_ocr(
-            f"gs://{BUCKET.name}/pics/{blob_name.as_posix()}"
-        )
-        vertices = get_vertices_from_response(response)
-        with open(local_vertices_path, 'w') as json_file:
-            json.dump(vertices, json_file, indent=4)
-    BUCKET.blob(gcp_vertices_path).upload_from_filename(local_vertices_path)
+    if BUCKET.blob(gcp_vertices_path).exists():
+        if not local_vertices_path.exists():
+            BUCKET.blob(gcp_vertices_path).download_to_filename(local_vertices_path)
+            # print("Downloaded from GCP to:", local_vertices_path.as_posix())
+        else:
+            pass
+            # print("Already exists on GCP and locally.")
+    else:
+        # print("Does not exist on GCP:", gcp_vertices_path)
+        if not local_vertices_path.exists():
+            # print("Does not exist locally:", local_vertices_path.as_posix())
+            response = request_ocr(
+                f"gs://{BUCKET.name}/pics/{blob_name.as_posix()}"
+            )
+            vertices = get_vertices_from_response(response)
+            print("Vertices:", vertices)
+            with open(local_vertices_path, 'w') as json_file:
+                json.dump(vertices, json_file, indent=4)
+        else:
+            pass
+            # print("Already exists locally.")
+
+        BUCKET.blob(gcp_vertices_path).upload_from_filename(local_vertices_path)
 
 
 if __name__ == '__main__':
     pause = 60
     futures = []
+    try:
+        with ThreadPoolExecutor(max_workers=16) as executor:
+            for i, blob in enumerate(all_blobs):
+                futures.append(executor.submit(ocr_process, blob))
+                # if i != 0 and i % 1700 == 0:
+                #     for future in tqdm(as_completed(futures), total=len(futures), desc="Processing images"):
+                #         future.result()
+                #
+                #     start = time.time()
+                #     print("Sleeping.", end="")
+                #     while time.time() - start <= pause:
+                #         time.sleep(2)
+                #         print(".", flush=True, end="")
 
-    with ThreadPoolExecutor(max_workers=16) as executor:
-        for i, blob in enumerate(all_blobs):
-            futures.append(executor.submit(ocr_process, blob))
-
-            if i != 0 and i % 1700 == 0:
-                start = time.time()
-                for future in tqdm(as_completed(futures), total=len(futures), desc="Processing images"):
-                    future.result()
-
-                print("Sleeping.", end="")
-                while time.time() - start <= pause:
-                    time.sleep(2)
-                    print(".", flush=True, end="")
-
-        for future in tqdm(as_completed(futures), total=len(futures), desc="Processing images"):
-            future.result()
+            for future in tqdm(as_completed(futures), total=len(futures), desc="Processing images"):
+                future.result()
 
     except Exception as e:
-        print(">>> Interrupted <<<")
+        print(">>> Interrupted <<<\n", e)
 
     finally:
         print(
-            "Total number of blobs processed:", len(all_blobs),
-            "| Requests made:", COUNTER
+            "Total number of blobs processed:", len(all_blobs)
         )
