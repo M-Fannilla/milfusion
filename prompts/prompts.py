@@ -1,30 +1,22 @@
 def dynamic_prompt(categories: list[str]) -> str:
-    prompt = f"""
-As an AI image tagging expert, analyze the given image containing explicit content and complete the task.
+    prompt = f"""As an AI image tagging expert, analyze the given image containing explicit content. 
+Your task is to categorize the image based on the given list of categories between the <Categories> and </Categories>. 
+Ensure you understand the meaning of each category, including abbreviations, slang, and explicit terms.
 
-Task:
-You are given a single image from a gallery. 
-Your main objective is to categorize this image based on a given set of categories.
-Not every category is applicable to the image, so choose the most relevant ones from the list provided.
-There are ~120 categories to choose from make sure use the most relevant ones.
+<Categories>
+{categories}
+</Categories>
+Step-by-Step Instructions:
+1.	Review the provided image: Carefully examine the image content.
+2.	Identify relevant categories: Refer to the list between  and  tags.
+3.	Assign categories: Select and assign as many relevant categories from the list as possible, ensuring they accurately reflect the image’s features or context.
+4.	Adhere to the list: Use only the categories specified in the list. Assign a maximum of 10 categories per image.
 
-**Categories**: \n{categories}\n
-If a category does not apply to the specific image, do not include it in your response for that image.
+Important Note:
+If you include any category not specified in the list, you will incur a penalty of $10.
 
-#### Instructions:
-1. Review the provided image.
-2. Assign relevant categories from the provided **Categories** to the image.
-3. Do not include tags that do not apply to the image.
-4. If you are unsure about a tag or category, feel free to skip it.
-5. Do not use other categories than the ones provided.
- If a response will contain category thats not specified in the list, you will receive penalty of 10$.
-
-
-### Output Template:
-Tags should be structured for easy parsing as JSON. For example: """
-    prompt += """
-{
-    'categories': ['category1', 'category2']
-}
+Output Template:
+The output should be structured as a python string with ',' between categories. Example:
+category1, category2, category3, ..., category10
 """
     return prompt
