@@ -4,12 +4,11 @@ import time
 import pandas as pd
 from tqdm import tqdm
 from pathlib import Path
-from threading import Lock
 from google.cloud import vision
 from utils import vision_client, SRC_DIR, BUCKET
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-df = pd.read_csv('datasets/ai_gen_dataset_5_cats.csv', index_col=0)
+df = pd.read_csv('datasets/medium_one_hot.csv', index_col=0)
 
 all_blobs = [Path(B) for B in df['file_path'].tolist()]
 print("Total blobs:", len(all_blobs))
@@ -80,7 +79,7 @@ def ocr_process(blob_name: Path):
                 f"gs://{BUCKET.name}/pics/{blob_name.as_posix()}"
             )
             vertices = get_vertices_from_response(response)
-            print("Vertices:", vertices)
+            # print("Vertices:", vertices)
             with open(local_vertices_path, 'w') as json_file:
                 json.dump(vertices, json_file, indent=4)
         else:
@@ -97,15 +96,14 @@ if __name__ == '__main__':
         with ThreadPoolExecutor(max_workers=16) as executor:
             for i, blob in enumerate(all_blobs):
                 futures.append(executor.submit(ocr_process, blob))
-                # if i != 0 and i % 1700 == 0:
-                #     for future in tqdm(as_completed(futures), total=len(futures), desc="Processing images"):
-                #         future.result()
-                #
-                #     start = time.time()
-                #     print("Sleeping.", end="")
-                #     while time.time() - start <= pause:
-                #         time.sleep(2)
-                #         print(".", flush=True, end="")
+                if i != 0 and i % 1700 == 0:
+                    for future in tqdm(as_completed(futures), total=len(futures), desc="Processing images"):
+                        future.result()
+                    start = time.time()
+                    print("Sleeping.", end="")
+                    while time.time() - start <= pause:
+                        time.sleep(2)
+                        print(".", flush=True, end="")
 
             for future in tqdm(as_completed(futures), total=len(futures), desc="Processing images"):
                 future.result()

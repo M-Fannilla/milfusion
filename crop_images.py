@@ -7,7 +7,7 @@ from pathlib import Path
 from utils import SRC_DIR, BUCKET
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-df = pd.read_csv('datasets/ai_gen_dataset_5_cats.csv')
+df = pd.read_csv('datasets/medium_one_hot.csv.csv')
 
 all_blobs = [Path(B) for B in df['file_path'].tolist()]
 print("Total blobs:", len(all_blobs))
