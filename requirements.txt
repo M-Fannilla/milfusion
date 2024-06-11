@@ -20,3 +20,4 @@ pandas
 tqdm
 accelerate
 flash_attn
+peft

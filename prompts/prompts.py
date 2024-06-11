@@ -23,16 +23,18 @@ category1, category2, category3, ..., category10
 
 
 def medium_prompt(categories: list[str]):
-    return f"""As an AI image tagging expert, analyze the given image containing explicit content.
-Your task is to fill json template and return as result:
+    return f"""As an AI image tagging expert, analyze the given image and extract its key features regarding, subject, persons, image context etc.
 
-Categories: {categories}
+Your task is to return a reduced the python list of tags as result.
+Only tags that are not applicable to the image should be removed.
+
+Tags: {categories}
 If you include any category not specified in the list, you will incur a penalty of $10.
 
 Output Template:
-The output should be structured as a python string with ',' between categories. Example:
-category1, category2, category3, ..., category10
-"""
+Do not provide any justification, return ONLY a python list of categories:
+example:
+[tag_1, tag_2, ..., tag_10]"""
 
 
 def simple_reduce_prompt(categories: list[str]):

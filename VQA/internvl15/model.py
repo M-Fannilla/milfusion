@@ -1,8 +1,7 @@
-from transformers import AutoTokenizer, AutoModel
 import torch
-import torchvision.transforms as T
 from PIL import Image
-
+import torchvision.transforms as T
+from transformers import AutoTokenizer, AutoModel
 from torchvision.transforms.functional import InterpolationMode
 
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
@@ -97,14 +96,26 @@ model = AutoModel.from_pretrained(
 tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True)
 
 
-def internvl15(image_path: str, prompt: str):
+def internvl15(image_path: str, prompt: str, num_beams: int = 1):
     pixel_values = load_image(image_path, max_num=6).to(torch.bfloat16).cuda()
 
     generation_config = dict(
-        num_beams=1,
+        num_beams=num_beams,
         max_new_tokens=512,
         do_sample=False,
     )
 
     response = model.chat(tokenizer, pixel_values, prompt, generation_config)
     return response
+
+# As an AI image tagging expert, analyze the given image and extract its key features regarding, subject, persons looks, image context etc.
+# Your task is to return is to generate a list of tags that will use given tags as basis.
+# Inspect the given list, cross validate against the image and remove the tags that are not applicable to the image.
+#
+# Tags:
+# ['ass', 'asshole', 'close up', 'hairy', 'legs', 'pawg', 'pussy', 'redhead', 'skinny', 'solo', 'spreading', 'teen', 'tiny tits']
+# If you include any tag that is not specified in the list, you will incur a penalty of $10.
+#
+# Output Template:
+# Number of getags is not restricted, do not repeat the tags.
+# Do not provide any justification, return ONLY a python list of tags.
