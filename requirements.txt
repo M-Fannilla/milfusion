@@ -17,3 +17,6 @@ sse-starlette
 scikit-learn
 pillow
 pandas
+tqdm
+accelerate
+flash_attn

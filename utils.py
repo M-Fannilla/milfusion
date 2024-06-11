@@ -12,11 +12,12 @@ storage_client = storage.Client()
 BUCKET_NAME = 'chum_bucket_stuff'
 _path = Path("/Volumes/external_drive")
 
-try:
-    (_path / '_').mkdir(exist_ok=True, parents=True)
-    shutil.rmtree(_path / '_')
-    SRC_DIR = _path
-except PermissionError as e:
+if 'workspace/' in str(os.getcwd()):
     SRC_DIR = Path("./images")
+else:
+    if _path.is_dir():
+        SRC_DIR = _path
+    else:
+        SRC_DIR = Path("./images")
 
 BUCKET = storage_client.bucket(BUCKET_NAME)
