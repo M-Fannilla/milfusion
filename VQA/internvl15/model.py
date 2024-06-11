@@ -107,15 +107,3 @@ def internvl15(image_path: str, prompt: str, num_beams: int = 1):
 
     response = model.chat(tokenizer, pixel_values, prompt, generation_config)
     return response
-
-# As an AI image tagging expert, analyze the given image and extract its key features regarding, subject, persons looks, image context etc.
-# Your task is to return is to generate a list of tags that will use given tags as basis.
-# Inspect the given list, cross validate against the image and remove the tags that are not applicable to the image.
-#
-# Tags:
-# ['ass', 'asshole', 'close up', 'hairy', 'legs', 'pawg', 'pussy', 'redhead', 'skinny', 'solo', 'spreading', 'teen', 'tiny tits']
-# If you include any tag that is not specified in the list, you will incur a penalty of $10.
-#
-# Output Template:
-# Number of getags is not restricted, do not repeat the tags.
-# Do not provide any justification, return ONLY a python list of tags.

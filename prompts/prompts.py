@@ -23,18 +23,16 @@ category1, category2, category3, ..., category10
 
 
 def medium_prompt(categories: list[str]):
-    return f"""As an AI image tagging expert, analyze the given image and extract its key features regarding, subject, persons, image context etc.
+    return f"""As an AI image tagging expert, analyze the given image and extract its key features regarding, subject, persons looks, image context etc.
+Your task is to return is to generate a list of tags that will use given tags as basis.
+Inspect the given list, cross validate against the image and remove the tags that are not applicable to the image.
 
-Your task is to return a reduced the python list of tags as result.
-Only tags that are not applicable to the image should be removed.
-
-Tags: {categories}
-If you include any category not specified in the list, you will incur a penalty of $10.
+Tags:
+{categories}
+If you include any tag that is not specified in the list, you will incur a penalty of $10.
 
 Output Template:
-Do not provide any justification, return ONLY a python list of categories:
-example:
-[tag_1, tag_2, ..., tag_10]"""
+Do not provide any justification, return ONLY a python list of tags."""
 
 
 def simple_reduce_prompt(categories: list[str]):
