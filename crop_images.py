@@ -44,7 +44,7 @@ def crop_image_and_save(local_image_path: Path, vertices: list) -> Path | None:
         return None
 
 
-def crop_process(image_file_path: Path, force: bool = True):
+def crop_process(image_file_path: Path, force: bool = False):
     local_image_path = (
             SRC_DIR / image_file_path
     )
