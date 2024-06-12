@@ -8,7 +8,7 @@ from google.cloud import vision
 from utils import vision_client, SRC_DIR, BUCKET
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-df = pd.read_csv('datasets/medium_one_hot.csv', index_col=0)
+df = pd.read_csv('datasets/ai_gen_dataset_5_cats.csv', index_col=0)
 
 all_blobs = [Path(B) for B in df['file_path'].tolist()]
 print("Total blobs:", len(all_blobs))

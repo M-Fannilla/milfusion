@@ -1,5 +1,5 @@
 # As an AI image tagging expert, analyze the given image containing explicit content and complete the provided template.
-# Return the filled template as a JSON object.Ensure that you select the most appropriate words from the provided lists
+# Return the filled template as a JSON object. Ensure that you select the most appropriate words from the provided lists
 # in the template.You may select multiple words from the list if applicable.If an item visible in the image is not
 # mentioned in the list, you may add it to your response. If['*'], please provide precise tag / tags to enhance the BLIP
 # model 's understanding of the content. Employ succinct keywords or phrases, steering clear of elaborate sentences and
@@ -11,7 +11,6 @@
 #     'full-nudity': bool,
 #     'intercourse': bool,
 #     'masturbation': bool,
-#     'genitals-close-up': bool,
 #     'left-breast-visible': bool,
 #     'right-breast-visible': bool,
 #     'underboob-visible': bool,
@@ -88,7 +87,7 @@
 #     },
 #     'lower_body': {
 #         'activity': [
-#             'cross-legged', 'legs apart', 'sprawled', 'spread-eagled', 'legs raised',
+#             'cross-legged', 'legs apart', 'sprawled', 'legs raised',
 #             'legs crossed', 'legs straight', 'legs bent'
 #         ],
 #         'clothing': [
@@ -105,6 +104,9 @@
 #         'legs on shoulders', 'butterfly', '69', 'side-by-side', 'face-to-face', 'lap dance', 'bridge',
 #         'scissors', 'kneeling', 'crab walk', 'prone bone', 'blowjob', 'cunnilingus'
 #     ],
+#     'sex-gadgets-types': [
+#         'vibrator', 'dildo', 'butt plug', 'anal beads', 'strap-on', 'bondage kit'
+#     ],
 # }
 # photo_descriptions = {
 #     'context': ['*'],
@@ -116,9 +118,6 @@
 #     'mood': ['*'],
 #     'person-count': ['*'],
 #     'photo_theme': ['*'],
-#     'sex-gadgets-types': [
-#         'vibrator', 'dildo', 'butt plug', 'anal beads', 'strap-on', 'bondage kit'
-#     ],
 # },
 # camera = {
 #     'shot-size': ['*'],
