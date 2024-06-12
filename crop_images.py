@@ -7,7 +7,8 @@ from pathlib import Path
 from utils import SRC_DIR, BUCKET
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-df = pd.read_csv('datasets/medium_one_hot.csv.csv')
+df = pd.read_csv('datasets/missing_paths.csv')
+# df = pd.read_csv('datasets/ai_gen.csv')
 
 all_blobs = [Path(B) for B in df['file_path'].tolist()]
 print("Total blobs:", len(all_blobs))
@@ -94,7 +95,7 @@ if __name__ == '__main__':
     with ThreadPoolExecutor(max_workers=16) as executor:
         for blob in tqdm(all_blobs, total=len(all_blobs), desc="Collecting images"):
             futures.append(
-                executor.submit(crop_process, blob, True)
+                executor.submit(crop_process, blob, False)
             )
 
         for future in tqdm(as_completed(futures), total=len(futures), desc="Processing images"):
