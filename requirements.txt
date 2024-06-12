@@ -4,7 +4,6 @@ pillow
 xformers==0.0.24
 torch==2.2.0
 torchvision
-transformers
 huggingface-hub
 chainlit
 pydantic
