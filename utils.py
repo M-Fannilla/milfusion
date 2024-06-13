@@ -4,7 +4,7 @@ from pathlib import Path
 from google.cloud import vision
 from google.cloud import storage
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "fannilla-dev.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = f"{os.getcwd()}/fannilla-dev.json"
 
 vision_client = vision.ImageAnnotatorClient()
 storage_client = storage.Client()
