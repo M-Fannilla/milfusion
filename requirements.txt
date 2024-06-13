@@ -20,4 +20,4 @@ flash_attn
 peft
 transformers @ git+https://github.com/huggingface/transformers
 sentencepiece
-transformers[sentencepiece]
+huggingface_hub
