@@ -6,7 +6,8 @@ import multiprocessing
 from utils import SRC_DIR, BUCKET
 from concurrent.futures import ThreadPoolExecutor
 
-df = pd.read_csv("datasets/cropped_medium_one_hot.csv")
+dataset_name = "cropped_medium_one_hot"
+df = pd.read_csv(f"datasets/{dataset_name}.csv", index_col=0)
 filenames = df["file_path"].tolist()
 
 
@@ -37,3 +38,7 @@ if __name__ == "__main__":
 
     for result in tqdm(results, total=len(results), desc="Downloading images"):
         result.result()
+
+    _out_df = df.copy()
+    _out_df["file_path"] = _out_df["file_path"].apply(lambda x: x.split("/")[-1])
+    _out_df.to_csv(f"datasets/compiled_{dataset_name}.csv")
