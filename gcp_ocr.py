@@ -90,28 +90,37 @@ def ocr_process(blob_name: Path):
 
 
 if __name__ == '__main__':
-    pause = 60
-    futures = []
-    try:
-        with ThreadPoolExecutor(max_workers=16) as executor:
-            for i, blob in enumerate(all_blobs):
-                futures.append(executor.submit(ocr_process, blob))
-                if i != 0 and i % 1700 == 0:
-                    for future in tqdm(as_completed(futures), total=len(futures), desc="Processing images"):
-                        future.result()
-                    start = time.time()
-                    print("Sleeping.", end="")
-                    while time.time() - start <= pause:
-                        time.sleep(2)
-                        print(".", flush=True, end="")
+    blob_name = "smoking/blonde-chick-dee-siren-smokes-a-cigarette-in-a-crotchless-bodystocking-98307590/98307590_003_d82d.jpg"
 
-            for future in tqdm(as_completed(futures), total=len(futures), desc="Processing images"):
-                future.result()
+    response = request_ocr(
+        f"gs://{BUCKET.name}/pics/{blob_name}"
+    )
+    print(response)
+    # vertices = get_vertices_from_response(response)
+    # print(vertices)
 
-    except Exception as e:
-        print(">>> Interrupted <<<\n", e)
-
-    finally:
-        print(
-            "Total number of blobs processed:", len(all_blobs)
-        )
+# pause = 60
+# futures = []
+# try:
+#     with ThreadPoolExecutor(max_workers=16) as executor:
+#         for i, blob in enumerate(all_blobs):
+#             futures.append(executor.submit(ocr_process, blob))
+#             if i != 0 and i % 1700 == 0:
+#                 for future in tqdm(as_completed(futures), total=len(futures), desc="Processing images"):
+#                     future.result()
+#                 start = time.time()
+#                 print("Sleeping.", end="")
+#                 while time.time() - start <= pause:
+#                     time.sleep(2)
+#                     print(".", flush=True, end="")
+#
+#         for future in tqdm(as_completed(futures), total=len(futures), desc="Processing images"):
+#             future.result()
+#
+# except Exception as e:
+#     print(">>> Interrupted <<<\n", e)
+#
+# finally:
+#     print(
+#         "Total number of blobs processed:", len(all_blobs)
+#     )

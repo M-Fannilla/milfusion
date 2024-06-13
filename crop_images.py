@@ -1,4 +1,5 @@
 import json
+import os
 import shutil
 import pandas as pd
 from tqdm import tqdm
@@ -7,7 +8,7 @@ from pathlib import Path
 from utils import SRC_DIR, BUCKET
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-df = pd.read_csv('datasets/missing_paths.csv')
+df = pd.read_csv('datasets/all_file_paths.csv')
 # df = pd.read_csv('datasets/ai_gen.csv')
 
 all_blobs = [Path(B) for B in df['file_path'].tolist()]
@@ -16,15 +17,20 @@ print("Total blobs:", len(all_blobs))
 
 def crop_image_and_save(local_image_path: Path, vertices: list) -> Path | None:
     try:
-        y_vertices = [int(vertex['y']) for vertex in vertices]
-        upper = min(y_vertices)
+        y_vertices = [
+            int(vertex['y'])
+            for vertex in vertices
+        ]
+
+        # If missing vertices means its 0
+        upper = min(y_vertices) if len(vertices) == 4 else 0
         lower = max(y_vertices)
 
         image = Image.open(local_image_path)
         width, height = image.size
 
         if abs(lower - upper) > 0.25 * height:
-            return
+            raise Exception
 
         if upper < height / 2:
             cropped_image = image.crop(
@@ -79,7 +85,10 @@ def crop_process(image_file_path: Path, force: bool = False):
                 if true_crop_image_path:
                     BUCKET.blob(gcp_crop_image_path).upload_from_filename(true_crop_image_path.as_posix())
                 else:
-                    return
+                    if local_crop_image_path.exists():
+                        os.remove(local_crop_image_path.as_posix())
+                    if BUCKET.blob(gcp_crop_image_path).exists():
+                        BUCKET.blob(gcp_crop_image_path).delete()
 
             if vertices is None:
                 shutil.copy(local_image_path, local_crop_image_path)
@@ -91,11 +100,10 @@ def crop_process(image_file_path: Path, force: bool = False):
 
 if __name__ == '__main__':
     futures = []
-
-    with ThreadPoolExecutor(max_workers=16) as executor:
+    with ThreadPoolExecutor(max_workers=32) as executor:
         for blob in tqdm(all_blobs, total=len(all_blobs), desc="Collecting images"):
             futures.append(
-                executor.submit(crop_process, blob, False)
+                executor.submit(crop_process, blob, True)
             )
 
         for future in tqdm(as_completed(futures), total=len(futures), desc="Processing images"):

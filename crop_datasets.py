@@ -5,7 +5,12 @@ from utils import SRC_DIR
 
 def is_cropped(row):
     file_path = Path(row.file_path)
-    cropped_file_path = SRC_DIR / file_path.parent / 'cropped' / file_path.name
+    cropped_file_path = (
+            SRC_DIR
+            / file_path.parent
+            / 'cropped'
+            / file_path.name
+    )
     if cropped_file_path.exists():
         return True
     else:
@@ -14,7 +19,11 @@ def is_cropped(row):
 
 def replace_file_path(row):
     file_path = Path(row.file_path)
-    return (file_path.parent / 'cropped' / file_path.name).as_posix()
+    return (
+            file_path.parent
+            / 'cropped'
+            / file_path.name
+    ).as_posix()
 
 
 if __name__ == "__main__":
