@@ -13,13 +13,15 @@ filenames = df["file_path"].tolist()
 IMAGE_DIR = Path("./images")
 
 
-def main_process(file_name: str, preserve_structure: bool = False):
+def main_process(file_name: str, preserve_structure: bool = False, force_download: bool = False):
     gcp_file_path = "pics/" + file_name
     local_destination = IMAGE_DIR / file_name if preserve_structure else IMAGE_DIR / file_name.split("/")[-1]
 
-    if not local_destination.exists():
-        local_destination.parent.mkdir(parents=True, exist_ok=True)
-        BUCKET.blob(gcp_file_path).download_to_filename(local_destination.as_posix())
+    if local_destination.exists() and not force_download:
+        return
+
+    local_destination.parent.mkdir(parents=True, exist_ok=True)
+    BUCKET.blob(gcp_file_path).download_to_filename(local_destination.as_posix())
 
 
 def main_process_from_drive(file_name: str, preserve_structure: bool = False, force_download: bool = False):
@@ -32,12 +34,12 @@ def main_process_from_drive(file_name: str, preserve_structure: bool = False, fo
 
 
 if __name__ == "__main__":
-    force = True
+    force = False
     structure = False
 
     with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count() * 2) as executor:
         results = [
-            executor.submit(main_process_from_drive, filename, structure, force)
+            executor.submit(main_process, filename, structure, force)
             for filename in tqdm(filenames, desc="Submitting process...", total=len(filenames))
         ]
 
@@ -45,8 +47,8 @@ if __name__ == "__main__":
             result.result()
     print("Compiling dataset...")
     _out_df = df.copy()
-    _out_df["file_path"] = _out_df["file_path"].apply(lambda x: x.split("/")[-1])
+    _out_df["file_path"] = _out_df["file_path"].apply(lambda x: IMAGE_DIR / x.split("/")[-1])
     _out_df.to_csv(f"{IMAGE_DIR.as_posix()}/compiled_{dataset_name}.csv")
-    print(f"Archiving {IMAGE_DIR}...")
-    shutil.make_archive(IMAGE_DIR.as_posix(), 'zip', IMAGE_DIR)
+    # print(f"Archiving {IMAGE_DIR}...")
+    # shutil.make_archive(IMAGE_DIR.as_posix(), 'zip', IMAGE_DIR)
     print("Done")
