@@ -18,3 +18,4 @@ tqdm
 accelerate
 flash_attn
 peft
+transformers @ git+https://github.com/huggingface/transformers

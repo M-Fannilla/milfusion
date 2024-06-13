@@ -50,8 +50,4 @@ class MultiPath:
                 return False
             self.local_path.parent.mkdir(parents=True, exist_ok=True)
 
-    def save_to_gcp(self):
-        if self.local_path.exists():
-            BUCKET.blob(self.gcp_location).upload_from_filename(self.local_path.as_posix())
-            return True
-        return False
+
