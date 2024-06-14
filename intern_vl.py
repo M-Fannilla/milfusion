@@ -1,3 +1,4 @@
+import pandas as pd
 import torch
 from PIL import Image
 import torchvision.transforms as T
@@ -123,3 +124,13 @@ def batch_image_intern(image_paths: list[str], prompts: list[str], model, tokeni
         questions=prompts,
         generation_config=generation_config
     )
+
+
+def process_dataframe_intern(dataframe: pd.DataFrame, batch_size: int, model, tokenizer):
+    results = []
+    for i in range(0, len(dataframe), batch_size):
+        batch = dataframe.iloc[i:i + batch_size]
+        image_paths = batch["image_path"].tolist()
+        prompts = batch["prompt"].tolist()
+        results.extend(batch_image_intern(image_paths, prompts, model, tokenizer))
+    return results
