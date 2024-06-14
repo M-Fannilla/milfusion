@@ -21,3 +21,4 @@ peft
 transformers @ git+https://github.com/huggingface/transformers
 sentencepiece
 huggingface_hub
+matplotlib
