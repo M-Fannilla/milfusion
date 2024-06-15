@@ -45,10 +45,9 @@ if __name__ == "__main__":
 
         for result in tqdm(results, total=len(results), desc="Downloading images"):
             result.result()
+
     print("Compiling dataset...")
     _out_df = df.copy()
     _out_df["file_path"] = _out_df["file_path"].apply(lambda x: IMAGE_DIR / x.split("/")[-1])
     _out_df.to_csv(f"{IMAGE_DIR.as_posix()}/compiled_{dataset_name}.csv")
-    # print(f"Archiving {IMAGE_DIR}...")
-    # shutil.make_archive(IMAGE_DIR.as_posix(), 'zip', IMAGE_DIR)
     print("Done")
