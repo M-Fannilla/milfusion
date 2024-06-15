@@ -7,7 +7,7 @@ import multiprocessing
 from utils import SRC_DIR, BUCKET
 from concurrent.futures import ThreadPoolExecutor
 
-dataset_name = "cropped_medium_one_hot"
+dataset_name = "cropped_all_one_hot"
 df = pd.read_csv(f"datasets/{dataset_name}.csv", index_col=0)
 filenames = df["file_path"].tolist()
 IMAGE_DIR = Path("./images")

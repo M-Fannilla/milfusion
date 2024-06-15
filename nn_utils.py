@@ -6,19 +6,20 @@ from sklearn.metrics import f1_score
 from efficientnet_pytorch import EfficientNet
 from transformers import ViTForImageClassification, ViTConfig
 
+import torch.nn.functional as F
+
+from sklearn.metrics import f1_score
+import numpy as np
+
 
 class WeightedBinaryCrossEntropyLoss(nn.Module):
-
-    def __init__(self, weights):
+    def __init__(self, pos_weight):
         super(WeightedBinaryCrossEntropyLoss, self).__init__()
-        self.weights = weights
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.pos_weight = pos_weight
 
     def forward(self, logits, targets):
-        logits = torch.sigmoid(logits)
-        bce = nn.BCELoss(reduction='none')(logits, targets)
-        weighted_bce = bce * self.weights
-        return weighted_bce.mean()
+        loss = F.binary_cross_entropy_with_logits(logits, targets, pos_weight=self.pos_weight, reduction='mean')
+        return loss
 
 
 def weighted_binary_cross_entropy(output, target, weights):
@@ -27,13 +28,11 @@ def weighted_binary_cross_entropy(output, target, weights):
     return loss.mean()
 
 
-def calculate_metrics(outputs, labels):
-    outputs = torch.sigmoid(outputs).cpu().detach().numpy()
-    labels = labels.cpu().detach().numpy()
-
-    # Calculate micro-average F1-score
-    micro_f1 = f1_score(labels, outputs.round(), average='micro')
-
+def calculate_micro_f1(outputs, targets):
+    outputs = outputs.detach().cpu().numpy()
+    targets = targets.detach().cpu().numpy()
+    outputs = (outputs > 0.5).astype(int)
+    micro_f1 = f1_score(targets, outputs, average='micro')
     return micro_f1
 
 
