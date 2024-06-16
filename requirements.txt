@@ -22,3 +22,7 @@ transformers @ git+https://github.com/huggingface/transformers
 sentencepiece
 huggingface_hub
 matplotlib
+torchvision
+vit-pytorch
+efficientnet-pytorch
+efficientnet

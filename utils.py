@@ -10,7 +10,7 @@ vision_client = vision.ImageAnnotatorClient()
 storage_client = storage.Client()
 
 BUCKET_NAME = 'chum_bucket_stuff'
-_path = Path("/Volumes/external_drive")
+_path = Path("/Volumes/external_drive/fannilla")
 
 if _path.is_dir():
     SRC_DIR = _path  # Local SSD

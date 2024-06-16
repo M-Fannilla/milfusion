@@ -1,15 +1,11 @@
 import torch
 import torch.nn as nn
-import torch.optim as optim
 from vit_pytorch import ViT
+import torch.optim as optim
+import torch.nn.functional as F
 from sklearn.metrics import f1_score
 from efficientnet_pytorch import EfficientNet
 from transformers import ViTForImageClassification, ViTConfig
-
-import torch.nn.functional as F
-
-from sklearn.metrics import f1_score
-import numpy as np
 
 
 class WeightedBinaryCrossEntropyLoss(nn.Module):

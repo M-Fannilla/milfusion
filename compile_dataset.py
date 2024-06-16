@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
     with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count() * 2) as executor:
         results = [
-            executor.submit(main_process, filename, structure, force)
+            executor.submit(main_process_from_drive, filename, structure, force)
             for filename in tqdm(filenames, desc="Submitting process...", total=len(filenames))
         ]
 
@@ -49,5 +49,5 @@ if __name__ == "__main__":
     print("Compiling dataset...")
     _out_df = df.copy()
     _out_df["file_path"] = _out_df["file_path"].apply(lambda x: IMAGE_DIR / x.split("/")[-1])
-    _out_df.to_csv(f"{IMAGE_DIR.as_posix()}/compiled_{dataset_name}.csv")
+    _out_df.to_csv(f"{IMAGE_DIR.as_posix()}/compiled_one_hot.csv")
     print("Done")

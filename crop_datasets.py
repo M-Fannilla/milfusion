@@ -29,7 +29,6 @@ def replace_file_path(row):
 if __name__ == "__main__":
     for dataset_path in [
         'ai_gen',
-        'small_one_hot',
         'all_one_hot',
     ]:
         df = pd.read_csv(f'datasets/{dataset_path}.csv', index_col=0)
