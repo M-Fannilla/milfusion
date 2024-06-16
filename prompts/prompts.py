@@ -281,3 +281,11 @@ A penalty of $10 will be charged for including any tag not on the list.
 Output:
 Provide ONLY a Python list of relevant tags, without any justification."""
 
+
+def batch_prompt(all_categories: list[str], batch=10):
+    for x in range(0, len(all_categories), batch):
+        categories = all_categories[x:x + batch]
+        yield f"""Reduce this list only to the ones that fit the image context. 
+If tags cannot be identified in the image do not include them in the output. 
+{categories}
+Your output should be a non repeatable list with categories names that apply to the image. Output only the list."""
