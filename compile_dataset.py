@@ -35,7 +35,7 @@ def main_process_from_drive(file_name: str, preserve_structure: bool = False, fo
 
 if __name__ == "__main__":
     force = False
-    structure = False
+    structure = True
 
     with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count() * 2) as executor:
         results = [

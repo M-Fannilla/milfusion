@@ -7,7 +7,8 @@ from utils import SRC_DIR
 
 def verify_img(img_path):
     try:
-        Image.open(SRC_DIR / img_path.split("/")[-1])
+        img = Image.open(SRC_DIR / img_path.split("/")[-1])
+        img.verify()
         return True
     except Exception as e:
         print(f"Error with {img_path}")
